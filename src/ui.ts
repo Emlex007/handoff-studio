@@ -468,7 +468,7 @@ function showToast(msg) {
         output.innerHTML = '';
         let styles = {}; 
         function hunt(n) {
-          if (n.type === 'TEXT') {
+          if (n.type === 'TEXT' && n.fontFamily) {
             let key = n.fontFamily + '_' + n.fontWeight + '_' + n.fontSize + '_' + n.lineHeight + '_' + (n.textStyleName || 'none');
             if (!styles[key]) {
               styles[key] = { 
@@ -483,7 +483,7 @@ function showToast(msg) {
             }
             if (!styles[key].layers.includes(n.name)) styles[key].layers.push(n.name);
 
-            let lhMatch = (n.lineHeight !== 'Auto') ? n.lineHeight.toString().match(/(\d+)/) : null;
+            let lhMatch = (n.lineHeight && n.lineHeight !== 'Auto') ? n.lineHeight.toString().match(/(\d+)/) : null;
             if (lhMatch && parseInt(lhMatch[0]) === parseInt(n.fontSize)) {
               let tight = insights.find(function(i) { return i.title === 'Tight Line Height Detected'; });
               if (!tight) {
