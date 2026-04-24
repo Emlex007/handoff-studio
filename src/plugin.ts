@@ -11,7 +11,10 @@ try {
 
   async function handleSelection() {
   try {
-    if (!figma.currentPage || !figma.currentPage.selection || !figma.currentPage.selection.length) return;
+    if (!figma.currentPage || !figma.currentPage.selection || !figma.currentPage.selection.length) {
+      figma.ui.postMessage({ type: 'selection-update', ast: null });
+      return;
+    }
     const currentVersion = ++selectionVersion;
     const selection = figma.currentPage.selection;
     if (selection.length > 0 && selection[0]) {
