@@ -20,7 +20,6 @@
       border-right: 1px solid rgba(255,255,255,0.1) !important;
       padding-left: 0 !important;
     }
-  \n
     :root {
       --bg-deep: #212121;
       --bg-card: #282828;
@@ -274,4 +273,3 @@
       background: var(--bg-card);
       color: #ECECF1;
     }
-  \n
