@@ -5,16 +5,15 @@ import { generateFlutter } from './generators/flutter';
 
 figma.showUI(__html__, { width: 450, height: 600 });
 
-// Initialize UI
-
 console.log("Handoff Studio V1.0.0 Active");
 
-let selectionVersion = 0;
+try {
+  let selectionVersion = 0;
 
-async function handleSelection() {
-  if (!figma.currentPage.selection.length) return;
-  const currentVersion = ++selectionVersion;
+  async function handleSelection() {
   try {
+    if (!figma.currentPage || !figma.currentPage.selection || !figma.currentPage.selection.length) return;
+    const currentVersion = ++selectionVersion;
     const selection = figma.currentPage.selection;
     if (selection.length > 0 && selection[0]) {
       const first = selection[0];
@@ -85,15 +84,30 @@ try {
 // Initial call removed to wait for UI ready
 // handleSelection();
 
-figma.ui.onmessage = function(msg: any) {
-  if (!msg) return;
-  if (msg.type === 'resize') {
-    figma.ui.resize(msg.width, msg.height);
-  } else if (msg.type === 'init-tracking') {
-    console.log("Tracking initialized from UI");
-  } else if (msg.type === 'ready') {
-    handleSelection();
-  }
-};
+  figma.ui.onmessage = function(msg: any) {
+    try {
+      if (!msg) return;
+      if (msg.type === 'resize') {
+        figma.ui.resize(msg.width, msg.height);
+      } else if (msg.type === 'init-tracking') {
+        console.log("Tracking initialized from UI");
+      } else if (msg.type === 'ready') {
+        handleSelection();
+      }
+    } catch (e) {
+      console.error("onmessage error", e);
+    }
+  };
 
-console.log("Plugin Started Successfully");
+  console.log("Plugin Started Successfully");
+
+} catch (globalCrash: any) {
+  console.error("GLOBAL CRASH:", globalCrash);
+  figma.notify("GLOBAL CRASH: " + globalCrash.message, { timeout: 10000 });
+  figma.ui.postMessage({ 
+    type: 'selection-update', 
+    ast: null,
+    error: "Global Code Init Error: " + globalCrash.message,
+    stack: globalCrash.stack
+  });
+}
