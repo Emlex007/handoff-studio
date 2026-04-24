@@ -2,7 +2,7 @@
   "name": "handoff-studio",
   "version": "1.0.0",
   "description": "Figma plugin handoff studio",
-  "main": "code.js",
+  "main": "dist/code.js",
   "dependencies": {
     "firebase": "^12.12.0"
   },
