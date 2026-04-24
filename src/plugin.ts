@@ -3,11 +3,10 @@ import { generateTailwind } from './generators/tailwind';
 import { generateSwiftUI } from './generators/swiftui';
 import { generateFlutter } from './generators/flutter';
 
-figma.showUI(__html__, { width: 450, height: 600 });
-
-console.log("Handoff Studio V1.0.0 Active");
-
 try {
+  figma.showUI(__html__, { width: 450, height: 600 });
+  console.log("Handoff Studio V1.0.0 Active");
+
   let selectionVersion = 0;
 
   async function handleSelection() {
