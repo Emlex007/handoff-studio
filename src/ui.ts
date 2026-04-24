@@ -121,6 +121,7 @@ function showToast(msg) {
 
       window.onmessage = function(event) {
         let msg = event.data.pluginMessage;
+        if (!msg) return;
         if (msg.type === 'selection-update') {
           let ast = msg.ast;
           let stickyHeader = document.getElementById('sticky-header');

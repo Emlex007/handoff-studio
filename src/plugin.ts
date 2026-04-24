@@ -52,8 +52,10 @@ async function handleSelection() {
       figma.ui.postMessage({ 
         type: 'selection-update', 
         ast: firstAST, 
+        pt: firstAST.pt,
         pb: firstAST.pb,
         pl: firstAST.pl,
+        pr: firstAST.pr,
         radius: firstAST.radius,
         border: firstAST.border,
         tokens: rawAST.atoms, // FIX: Use the rawAST.atoms which extracts color tokens
@@ -77,7 +79,10 @@ figma.on("selectionchange", handleSelection);
 handleSelection();
 
 figma.ui.onmessage = function(msg: any) {
+  if (!msg) return;
   if (msg.type === 'resize') {
     figma.ui.resize(msg.width, msg.height);
+  } else if (msg.type === 'init-tracking') {
+    console.log("Tracking initialized from UI");
   }
 };
