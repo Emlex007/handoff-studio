@@ -14,7 +14,7 @@ async function handleSelection() {
   const currentVersion = ++selectionVersion;
   try {
     const selection = figma.currentPage.selection;
-    if (selection.length > 0) {
+    if (selection.length > 0 && selection[0]) {
       const first = selection[0];
       
       const rawAST = cleanNode(first, 0);
@@ -76,7 +76,8 @@ async function handleSelection() {
 figma.on("selectionchange", handleSelection);
 
 // Initial call
-handleSelection();
+// Initial call removed to wait for UI ready
+// handleSelection();
 
 figma.ui.onmessage = function(msg: any) {
   if (!msg) return;
@@ -84,5 +85,9 @@ figma.ui.onmessage = function(msg: any) {
     figma.ui.resize(msg.width, msg.height);
   } else if (msg.type === 'init-tracking') {
     console.log("Tracking initialized from UI");
+  } else if (msg.type === 'ready') {
+    handleSelection();
   }
 };
+
+console.log("Plugin Started Successfully");
