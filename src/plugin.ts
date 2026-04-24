@@ -3,14 +3,16 @@ import { generateTailwind } from './generators/tailwind';
 import { generateSwiftUI } from './generators/swiftui';
 import { generateFlutter } from './generators/flutter';
 
+figma.showUI(__html__, { width: 450, height: 600 });
+
 // Initialize UI
-figma.showUI(__html__, { themeColors: true, width: 400, height: 660 });
 
 console.log("Handoff Studio V1.0.0 Active");
 
 let selectionVersion = 0;
 
 async function handleSelection() {
+  if (!figma.currentPage.selection.length) return;
   const currentVersion = ++selectionVersion;
   try {
     const selection = figma.currentPage.selection;
@@ -73,7 +75,11 @@ async function handleSelection() {
   }
 }
 
-figma.on("selectionchange", handleSelection);
+try {
+  figma.on("selectionchange", handleSelection);
+} catch (e) {
+  console.warn("Could not bind selectionchange event:", e);
+}
 
 // Initial call
 // Initial call removed to wait for UI ready
