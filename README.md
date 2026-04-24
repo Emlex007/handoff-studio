@@ -30,39 +30,34 @@ We prioritize generating professional, maintainable component patterns:
 - **SwiftUI:** Uses native, idiomatic `VStack`, `HStack`, and `ZStack` layouts.
 - **Flutter:** Generates clean widget trees without unnecessary nesting.
 
-## 🚀 Getting Started (For Developers)
+## 🚀 Getting Started
 
-Follow these steps to run Handoff Studio locally for development:
-
-### Prerequisites
-
-- [Node.js](https://nodejs.org/) installed
-- [Figma Desktop App](https://www.figma.com/downloads/)
+Handoff Studio is pre-compiled and ready to use out-of-the-box. You do not need to install Node.js or run any build commands!
 
 ### Installation
 
-1. **Clone the repository:**
+1. **Download the repository:**
+   Clone the repository or download the ZIP file and extract it.
    ```bash
    git clone https://github.com/Emlex007/handoff-studio.git
-   cd "handoff-studio"
    ```
 
-2. **Install dependencies:**
-   ```bash
-   npm install
-   ```
+2. **Load into Figma:**
+   - Open the Figma Desktop App.
+   - Go to **Plugins** > **Manage Plugins** > **Development** > **Import plugin from manifest...**
+   - Select the `manifest.json` file located in the root folder of the downloaded project.
 
-3. **Build the plugin:**
-   ```bash
-   npm run build
-   ```
+3. **Run the Plugin:**
+   - Open any Figma file.
+   - Right-click on the canvas, navigate to **Plugins** > **Development**, and select **Handoff Studio** to run it.
 
-### Loading the Plugin in Figma
+### For Contributors (Optional)
 
-1. Open the Figma Desktop App.
-2. Go to **Plugins** > **Manage Plugins** > **Development** > **Import plugin from manifest...**
-3. Select the `manifest.json` file located in the root of this project.
-4. Open any Figma file, right-click on the canvas, navigate to **Plugins** > **Development**, and select **Handoff Studio** to run it.
+If you wish to modify the source code, you will need to install dependencies and rebuild the plugin:
+```bash
+npm install
+npm run build
+```
 
 ## 🤝 Contributing
 
