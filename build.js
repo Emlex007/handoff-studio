@@ -25,8 +25,8 @@ async function build() {
         entryPoints: ['src/plugin.ts'],
         bundle: true,
         outfile: 'dist/code.js',
-        target: 'es2020',
-        minify: true,
+        target: 'es2015',
+        minify: false,
     });
 
     // 2. Build Plugin Frontend JS (UI)
@@ -39,8 +39,8 @@ async function build() {
         entryPoints: ['src/ui.ts'],
         bundle: true,
         outfile: 'dist/ui.js',
-        target: 'es2020',
-        minify: true,
+        target: 'es2015',
+        minify: false,
         define: defineVars,
     });
 
