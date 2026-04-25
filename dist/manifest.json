@@ -1,6 +1,7 @@
 {
   "name": "Handoff Studio",
-  "id": "1",
+  "id": "1629954004040673877",
+  "documentAccess": "dynamic-page",
   "api": "1.0.0",
   "main": "code.js",
   "ui": "ui.html",
