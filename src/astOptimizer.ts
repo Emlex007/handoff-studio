@@ -266,24 +266,27 @@ function flattenButton(ast: any): any {
     };
 }
 
-export function findVariants(node: any) {
+export async function findVariants(node: any) {
   let results: any[] = [];
   let limit = 0;
   
-  function walk(n: any) {
+  async function walk(n: any) {
     if (limit > 500) return;
     limit++;
 
-    if (n.type === 'INSTANCE' && n.mainComponent && n.mainComponent.parent && n.mainComponent.parent.type === 'COMPONENT_SET') {
+    if (n.type === 'INSTANCE') {
       try {
-        let set = n.mainComponent.parent;
-        let menu: Record<string, any> = {};
-        let props = set.variantGroupProperties;
-        for (let p in props) {
-          menu[p] = { values: props[p].values, current: n.variantProperties[p] };
-        }
-        if (Object.keys(menu).length > 0) {
-          results.push({ name: n.name, id: n.id, variantMenu: menu });
+        let mainComp = await n.getMainComponentAsync();
+        if (mainComp && mainComp.parent && mainComp.parent.type === 'COMPONENT_SET') {
+          let set = mainComp.parent;
+          let menu: Record<string, any> = {};
+          let props = set.variantGroupProperties;
+          for (let p in props) {
+            menu[p] = { values: props[p].values, current: n.variantProperties[p] };
+          }
+          if (Object.keys(menu).length > 0) {
+            results.push({ name: n.name, id: n.id, variantMenu: menu });
+          }
         }
       } catch (e) {}
     } else if (n.variantProperties && Object.keys(n.variantProperties).length > 0) {
@@ -301,10 +304,12 @@ export function findVariants(node: any) {
     }
     
     if (n.children && n.children.length > 0) {
-      n.children.forEach(function(c: any) { walk(c); });
+      for (const c of n.children) {
+        await walk(c);
+      }
     }
   }
 
-  walk(node);
+  await walk(node);
   return results;
 }

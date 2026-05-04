@@ -30,7 +30,7 @@ try {
       
       console.log("AST Result:", refinedAST);
       if (refinedAST) {
-          refinedAST.foundVariants = findVariants(first);
+          refinedAST.foundVariants = await findVariants(first);
       }
 
       await new Promise(resolve => setTimeout(resolve, 5));

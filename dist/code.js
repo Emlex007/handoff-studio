@@ -264,46 +264,53 @@
     });
   }
   function findVariants(node) {
-    let results = [];
-    let limit = 0;
-    function walk(n) {
-      if (limit > 500) return;
-      limit++;
-      if (n.type === "INSTANCE" && n.mainComponent && n.mainComponent.parent && n.mainComponent.parent.type === "COMPONENT_SET") {
-        try {
-          let set = n.mainComponent.parent;
-          let menu = {};
-          let props = set.variantGroupProperties;
-          for (let p in props) {
-            menu[p] = { values: props[p].values, current: n.variantProperties[p] };
-          }
-          if (Object.keys(menu).length > 0) {
-            results.push({ name: n.name, id: n.id, variantMenu: menu });
-          }
-        } catch (e) {
-        }
-      } else if (n.variantProperties && Object.keys(n.variantProperties).length > 0) {
-        if (n.parent && n.parent.type === "COMPONENT_SET") {
-          try {
-            let set = n.parent;
-            let menu = {};
-            let props = set.variantGroupProperties;
-            for (let p in props) {
-              menu[p] = { values: props[p].values, current: n.variantProperties[p] };
+    return __async(this, null, function* () {
+      let results = [];
+      let limit = 0;
+      function walk(n) {
+        return __async(this, null, function* () {
+          if (limit > 500) return;
+          limit++;
+          if (n.type === "INSTANCE") {
+            try {
+              let mainComp = yield n.getMainComponentAsync();
+              if (mainComp && mainComp.parent && mainComp.parent.type === "COMPONENT_SET") {
+                let set = mainComp.parent;
+                let menu = {};
+                let props = set.variantGroupProperties;
+                for (let p in props) {
+                  menu[p] = { values: props[p].values, current: n.variantProperties[p] };
+                }
+                if (Object.keys(menu).length > 0) {
+                  results.push({ name: n.name, id: n.id, variantMenu: menu });
+                }
+              }
+            } catch (e) {
             }
-            results.push({ name: n.name, id: n.id, variantMenu: menu });
-          } catch (e) {
+          } else if (n.variantProperties && Object.keys(n.variantProperties).length > 0) {
+            if (n.parent && n.parent.type === "COMPONENT_SET") {
+              try {
+                let set = n.parent;
+                let menu = {};
+                let props = set.variantGroupProperties;
+                for (let p in props) {
+                  menu[p] = { values: props[p].values, current: n.variantProperties[p] };
+                }
+                results.push({ name: n.name, id: n.id, variantMenu: menu });
+              } catch (e) {
+              }
+            }
           }
-        }
-      }
-      if (n.children && n.children.length > 0) {
-        n.children.forEach(function(c) {
-          walk(c);
+          if (n.children && n.children.length > 0) {
+            for (const c of n.children) {
+              yield walk(c);
+            }
+          }
         });
       }
-    }
-    walk(node);
-    return results;
+      yield walk(node);
+      return results;
+    });
   }
 
   // src/utils/dom.ts
@@ -496,7 +503,7 @@
             if (currentVersion !== selectionVersion) return;
             console.log("AST Result:", refinedAST);
             if (refinedAST) {
-              refinedAST.foundVariants = findVariants(first);
+              refinedAST.foundVariants = yield findVariants(first);
             }
             yield new Promise((resolve) => setTimeout(resolve, 5));
             if (currentVersion !== selectionVersion) return;
