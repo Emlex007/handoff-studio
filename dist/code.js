@@ -267,6 +267,29 @@
     return __async(this, null, function* () {
       let results = [];
       let limit = 0;
+      function getVariantPropertiesSafe(n) {
+        try {
+          if (n.variantProperties) {
+            return n.variantProperties;
+          }
+        } catch (e) {
+        }
+        try {
+          if (n.componentProperties) {
+            let res = {};
+            for (let k in n.componentProperties) {
+              let prop = n.componentProperties[k];
+              if (prop && prop.type === "VARIANT") {
+                let cleanKey = k.split("#")[0];
+                res[cleanKey] = String(prop.value);
+              }
+            }
+            return res;
+          }
+        } catch (e) {
+        }
+        return {};
+      }
       function walk(n) {
         return __async(this, null, function* () {
           if (limit > 500) return;
@@ -278,8 +301,9 @@
                 let set = mainComp.parent;
                 let menu = {};
                 let props = set.variantGroupProperties;
+                let varProps = getVariantPropertiesSafe(n);
                 for (let p in props) {
-                  menu[p] = { values: props[p].values, current: n.variantProperties[p] };
+                  menu[p] = { values: props[p].values, current: varProps ? varProps[p] : void 0 };
                 }
                 if (Object.keys(menu).length > 0) {
                   results.push({ name: n.name, id: n.id, variantMenu: menu });
@@ -287,17 +311,20 @@
               }
             } catch (e) {
             }
-          } else if (n.variantProperties && Object.keys(n.variantProperties).length > 0) {
-            if (n.parent && n.parent.type === "COMPONENT_SET") {
-              try {
-                let set = n.parent;
-                let menu = {};
-                let props = set.variantGroupProperties;
-                for (let p in props) {
-                  menu[p] = { values: props[p].values, current: n.variantProperties[p] };
+          } else {
+            let varProps = getVariantPropertiesSafe(n);
+            if (varProps && Object.keys(varProps).length > 0) {
+              if (n.parent && n.parent.type === "COMPONENT_SET") {
+                try {
+                  let set = n.parent;
+                  let menu = {};
+                  let props = set.variantGroupProperties;
+                  for (let p in props) {
+                    menu[p] = { values: props[p].values, current: varProps[p] };
+                  }
+                  results.push({ name: n.name, id: n.id, variantMenu: menu });
+                } catch (e) {
                 }
-                results.push({ name: n.name, id: n.id, variantMenu: menu });
-              } catch (e) {
               }
             }
           }

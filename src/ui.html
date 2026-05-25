@@ -271,62 +271,10 @@
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-typescript.min.js" integrity="sha512-uOw7XYETzS/DPmmirpP5UCMihSDNMeyTS965J0/456OSPfxn9xEtHHjj5Q/5WefVdqyMfN/afmQnNpZd/tpkcA==" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-tsx.min.js" integrity="sha512-xjGCJ9YxyZBfYTCHsEjkOZMoOse1W3cKMXv1szXrxs68myuXt0YTj3/xKPar6iDMlXzTUSEqwUxprWcyp+plaw==" crossorigin="anonymous"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/plugins/line-numbers/prism-line-numbers.min.js" integrity="sha512-BttltKXFyWnGZQcRWj6osIg7lbizJchuAMotOkdLxHxwt/Hyo+cl47bZU0QADg+Qt5DJwni3SbYGXeGMB5cBcw==" crossorigin="anonymous"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-app-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-auth-compat.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore-compat.js"></script>
   <script>
-    try {
-      const firebaseConfig = {
-        apiKey: process.env.FIREBASE_API_KEY,
-        authDomain: process.env.FIREBASE_AUTH_DOMAIN,
-        projectId: process.env.FIREBASE_PROJECT_ID,
-        storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
-        messagingSenderId: process.env.FIREBASE_MESSAGING_SENDER_ID,
-        appId: process.env.FIREBASE_APP_ID,
-        measurementId: process.env.FIREBASE_MEASUREMENT_ID
-      };
-      if (typeof firebase !== 'undefined') {
-        firebase.initializeApp(firebaseConfig);
-      }
-    } catch (e) {
-      console.warn("Firebase init failed:", e);
-    }
-
     window.addEventListener('load', () => {
       // Notify plugin backend that UI is ready
       parent.postMessage({ pluginMessage: { type: 'ready' } }, '*');
-      
-      try {
-        const today = new Date().toISOString().split('T')[0];
-        const sentThisSession = sessionStorage.getItem('ping_sent') === 'true';
-        const sentToday = localStorage.getItem('ping_date') === today;
-
-        if (!sentThisSession && !sentToday) {
-          sessionStorage.setItem('ping_sent', 'true');
-          localStorage.setItem('ping_date', today);
-          parent.postMessage({ pluginMessage: { type: 'init-tracking' } }, '*');
-
-          if (typeof firebase !== 'undefined') {
-            firebase.auth().signInAnonymously()
-              .then((userCredential) => {
-                const user = userCredential.user;
-                const db = firebase.firestore();
-                return db.collection('active_users').doc(user.uid).set({
-                  lastSeen: firebase.firestore.FieldValue.serverTimestamp(),
-                  uid: user.uid
-                }, { merge: true });
-              })
-              .then(() => {
-                console.log("Firebase Tracking Active");
-              })
-              .catch((error) => {
-                console.error("Firebase tracking error:", error);
-              });
-          }
-        }
-      } catch (e) {
-        console.warn("Tracking block failed:", e);
-      }
     });
   </script>
   <!-- INJECT_JS -->

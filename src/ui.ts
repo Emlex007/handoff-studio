@@ -1,3 +1,5 @@
+import { initTracking } from "../Firebase";
+
 function showToast(msg) {
       let t = document.getElementById('toast');
       if (!t) return;
@@ -21,6 +23,7 @@ function showToast(msg) {
     }
 
     (function() {
+      initTracking();
       let container = document.getElementById('panel-container');
       let emptyState = document.getElementById('empty-state');
       let currentAST = null;

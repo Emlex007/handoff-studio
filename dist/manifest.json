@@ -17,7 +17,7 @@
       "https://*.firebaseio.com",
       "https://*.googleapis.com",
       "https://static.figma.com",
-      "https://firebaseapp.com"
+      "https://*.firebaseapp.com"
     ],
     "reasoning": "Firebase is used for anonymous user tracking and analytics."
   }

@@ -1,6 +1,8 @@
+console.log("Firebase.ts: Module loading...");
+
 import { initializeApp } from "firebase/app";
 import { getAnalytics } from "firebase/analytics";
-import { getAuth, signInAnonymously } from "firebase/auth";
+import { initializeAuth, inMemoryPersistence, signInAnonymously } from "firebase/auth";
 import { getFirestore, doc, setDoc, serverTimestamp } from "firebase/firestore";
 
 const firebaseConfig = {
@@ -13,21 +15,38 @@ const firebaseConfig = {
   measurementId: process.env.FIREBASE_MEASUREMENT_ID
 };
 
+console.log("Firebase.ts: Config loaded", firebaseConfig);
+
 const app = initializeApp(firebaseConfig);
+console.log("Firebase.ts: App initialized");
 
 let analytics;
 if (typeof window !== "undefined") {
-  analytics = getAnalytics(app);
+  try {
+    analytics = getAnalytics(app);
+    console.log("Firebase.ts: Analytics initialized");
+  } catch (error) {
+    console.warn("Firebase.ts: Analytics initialization failed:", error);
+  }
 }
 
-const auth = getAuth(app);
+const auth = initializeAuth(app, {
+  persistence: inMemoryPersistence
+});
+console.log("Firebase.ts: Auth initialized with inMemoryPersistence");
+
 const db = getFirestore(app);
+console.log("Firebase.ts: Firestore initialized");
 
 export const initTracking = async () => {
+  console.log("Firebase.ts: initTracking called");
   try {
+    console.log("Firebase.ts: Calling signInAnonymously...");
     const userCredential = await signInAnonymously(auth);
     const user = userCredential.user;
+    console.log("Firebase Anonymous Auth UID:", user.uid);
     
+    console.log("Firebase.ts: Calling setDoc in Firestore...");
     await setDoc(doc(db, "active_users", user.uid), {
       lastSeen: serverTimestamp(),
       uid: user.uid
